@@ -1,0 +1,59 @@
+<project name="Devops_Number" default="build-jar">
+    
+	<property name="project.name" value="NumberWords" />
+	<property name="project.work.dir" value="${basedir}/build-artifacts/${project.name}" />
+	<property name="project.work.classes" value="${project.work.dir}/classes" />
+	<property name="project.jar" value="${project.name}.jar" />
+	<property name="project.dist.dir" value="${basedir}/build-artifacts" />
+	<property name="main.class" value="com.assignment.numbers.NumberConverter" />
+	<property name="class-path" value="${basedir}/build-artifacts/NumberConverter/classes/com/assignment/numbers/"/>
+	<target name="init-jar-build" description="clean up and prepare for build">
+		<echo>Cleaning up working dir ${project.work.dir} and basedir ${basedir}</echo>
+		<delete failonerror="false">
+			<fileset dir="${project.work.dir}" />
+		</delete>
+		<mkdir dir="${project.dist.dir}" />
+		<mkdir dir="${project.work.classes}" />
+	</target>
+	<!-- compile & jar common classes -->
+	<target name="build-jar" depends="init-jar-build" description="build the utility jar">
+
+		<echo>BUILDING ${project.name}.jar</echo>
+		<path id="master-classpath">
+			<fileset dir="${basedir}/src">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<path id="lib-classpath">
+			<fileset dir="${basedir}/build-lib">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<path id="main-class">
+			<fileset dir="${lib.dir}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<javac srcdir="${basedir}/src" destdir="${project.work.classes}" debug="true" encoding="ISO-8859-1">
+			<classpath refid="master-classpath" />
+			<classpath refid="lib-classpath" />
+		</javac>
+
+		<copy todir="${project.work.classes}">
+			<fileset dir="${basedir}/src">
+			</fileset>
+		</copy>
+
+		<echo>Jarring common utility jar</echo>
+
+		<jar destfile="${project.dist.dir}/${project.jar}">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+			<fileset dir="${project.work.classes}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		<echo>BUILD for ${project.name}.jar SUCCESSFUL</echo>
+	</target>
+</project>
